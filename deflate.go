@@ -23,12 +23,9 @@ func DeflateStream(r io.Reader, w io.Writer) error {
 }
 
 func deflateRecord(record, lastRecord []string) []string {
-	if lastRecord == nil {
-		return record
-	}
 	res := make([]string, len(record))
 	for i, x := range record {
-		if x == lastRecord[i] {
+		if lastRecord != nil && x == lastRecord[i] {
 			res[i] = "^"
 		} else if IsCarrotOnly(x) {
 			res[i] = "^" + x

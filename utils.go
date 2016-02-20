@@ -42,10 +42,10 @@ func ReadCSV(r io.Reader, f func(record []string) error) error {
 	}
 }
 
-// IsCarrotOnly returns true if the given string contains at least two ^ characters and no other
-// characters.
+// IsCarrotOnly returns true if the given string contains at least one '^' and no other types of
+// character.
 func IsCarrotOnly(entry string) bool {
-	if len(entry) < 2 {
+	if len(entry) < 1 {
 		return false
 	}
 	for _, ch := range entry {
