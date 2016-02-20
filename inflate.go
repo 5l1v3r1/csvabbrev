@@ -29,7 +29,7 @@ func inflateRecord(record, lastRecord []string) error {
 	for i, x := range record {
 		if x == "^" {
 			if lastRecord == nil {
-				return errors.New("cannot use '^' in first entry")
+				return errors.New("cannot use '^' in line 1")
 			} else {
 				record[i] = lastRecord[i]
 			}
