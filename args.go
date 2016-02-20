@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func processArgs() (inflate bool, input io.ReadCloser, output io.WriteCloser) {
+func ProcessArgs() (inflate bool, input io.ReadCloser, output io.WriteCloser) {
 	var inputFile *string
 	var outputFile *string
 

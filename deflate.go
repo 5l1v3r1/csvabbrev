@@ -2,21 +2,13 @@ package main
 
 import (
 	"encoding/csv"
-	"errors"
 	"io"
-	"strconv"
 )
 
-func deflateStream(r io.Reader, w io.Writer) error {
+func DeflateStream(r io.Reader, w io.Writer) error {
 	var lastRecord []string
-	csvReader := csv.NewReader(r)
 	csvWriter := csv.NewWriter(w)
-	lineNum := 1
-	for {
-		record, err := csvReader.Read()
-		if err != nil {
-			return errors.New("line " + strconv.Itoa(lineNum) + ": " + err.Error())
-		}
+	return ReadCSV(r, func(record []string) error {
 		deflated := deflateRecord(record, lastRecord)
 		lastRecord = record
 		if err := csvWriter.Write(deflated); err != nil {
@@ -26,13 +18,8 @@ func deflateStream(r io.Reader, w io.Writer) error {
 		if err := csvWriter.Error(); err != nil {
 			return err
 		}
-		lineNum++
-		select {
-		case <-DieChannel:
-			return nil
-		default:
-		}
-	}
+		return nil
+	})
 }
 
 func deflateRecord(record, lastRecord []string) []string {
@@ -43,7 +30,7 @@ func deflateRecord(record, lastRecord []string) []string {
 	for i, x := range record {
 		if x == lastRecord[i] {
 			res[i] = "^"
-		} else if isCarrotOnly(x) {
+		} else if IsCarrotOnly(x) {
 			res[i] = "^" + x
 		} else {
 			res[i] = x

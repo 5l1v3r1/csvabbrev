@@ -4,19 +4,12 @@ import (
 	"encoding/csv"
 	"errors"
 	"io"
-	"strconv"
 )
 
-func inflateStream(r io.Reader, w io.Writer) error {
+func InflateStream(r io.Reader, w io.Writer) error {
 	var lastRecord []string
-	csvReader := csv.NewReader(r)
 	csvWriter := csv.NewWriter(w)
-	lineNum := 1
-	for {
-		record, err := csvReader.Read()
-		if err != nil {
-			return errors.New("line " + strconv.Itoa(lineNum) + ": " + err.Error())
-		}
+	return ReadCSV(r, func(record []string) error {
 		if err := inflateRecord(record, lastRecord); err != nil {
 			return err
 		}
@@ -28,13 +21,8 @@ func inflateStream(r io.Reader, w io.Writer) error {
 		if err := csvWriter.Error(); err != nil {
 			return err
 		}
-		lineNum++
-		select {
-		case <-DieChannel:
-			return nil
-		default:
-		}
-	}
+		return nil
+	})
 }
 
 func inflateRecord(record, lastRecord []string) error {
@@ -45,21 +33,9 @@ func inflateRecord(record, lastRecord []string) error {
 			} else {
 				record[i] = lastRecord[i]
 			}
-		} else if isCarrotOnly(x) {
+		} else if IsCarrotOnly(x) {
 			record[i] = x[1:]
 		}
 	}
 	return nil
-}
-
-func isCarrotOnly(entry string) bool {
-	if len(entry) < 2 {
-		return false
-	}
-	for _, ch := range entry {
-		if ch != '^' {
-			return false
-		}
-	}
-	return true
 }
