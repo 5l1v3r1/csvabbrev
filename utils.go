@@ -2,9 +2,7 @@ package main
 
 import (
 	"encoding/csv"
-	"errors"
 	"io"
-	"strconv"
 )
 
 // ReadCSV reads a CSV stream line by line, passing each parsed record to f.
@@ -17,7 +15,6 @@ import (
 // This will return nil if DieChannel is closed.
 func ReadCSV(r io.Reader, f func(record []string) error) error {
 	stream := readCSVLines(r)
-	lineNum := 1
 	for {
 		select {
 		case <-DieChannel:
@@ -30,7 +27,7 @@ func ReadCSV(r io.Reader, f func(record []string) error) error {
 			if !ok {
 				return nil
 			} else if x.err != nil {
-				return errors.New("line " + strconv.Itoa(lineNum) + ": " + x.err.Error())
+				return x.err
 			}
 			if err := f(x.record); err != nil {
 				return err
@@ -38,7 +35,6 @@ func ReadCSV(r io.Reader, f func(record []string) error) error {
 		case <-DieChannel:
 			return nil
 		}
-		lineNum++
 	}
 }
 
