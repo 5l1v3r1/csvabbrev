@@ -59,4 +59,4 @@ The `csvabbrev` command is designed to run on a continuous stream of input. This
 
 The `csvabbrev` command attempts to shutdown gracefully. If `csvabbrev` is sent a `SIGTERM` or `SIGINT`, it will wait to finish writing its current line of CSV data before terminating.
 
-If the incoming CSV data contains a line with an incorrect number of CSV fields (as determined by the first line of the input), `csvabbrev` will print an error to standard error and terminate. The previous lines, which `csvabbrev` has already processed, will be written to the destination. However, no further lines will be processed before the command terminates.
+If the incoming CSV data contains a malformed line, `csvabbrev` will print an error to standard error and terminate. The previous lines which `csvabbrev` has already processed will be written to the destination. However, no further lines will be processed before the command terminates.
