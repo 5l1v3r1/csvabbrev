@@ -8,7 +8,7 @@ This README describes [the algorithm employed by](#how-it-works) and [the comman
 
 Unlike gzip and other forms of binary compression, files compressed with `csvabbrev` can be joined with simple file concatenation. This is useful when working with many large CSV files.
 
-Another advantage of `csvabbrev` is that it deals with individual *lines* of the input file. If you kill `gzip` while it is compressing a CSV file, who knows if the resulting file represent valid CSV. With `csvabbrev`, you know that sending a SIGTERM will cause `csvabbrev` to flush the current line before terminating. This is especially useful when piping an infinite stream of CSV data into `csvabbrev`.
+Another advantage of `csvabbrev` is that it deals with individual *lines* of the input file. If you kill `gzip` while it is compressing a CSV file, who knows if the resulting file represents valid CSV. With `csvabbrev`, you know that sending a SIGTERM will cause `csvabbrev` to flush the current line before terminating. This is especially useful when piping an infinite stream of CSV data into `csvabbrev`.
 
 # How it works
 
@@ -55,9 +55,9 @@ Notice that, if you do not specify a second file argument, `csvabbrev` sends its
 
 To inflate (i.e. decompress) a file, the usage is almost exactly the same, but you must use the `-i` or `--inflate` flag:
 
-  $ cat compressed.csv | csvabbrev -i >inflated.csv
-  $ csvabbrev -i compressed.csv inflated.csv
-  $ csvabbrev -i compressed.csv >inflated.csv
+    $ cat compressed.csv | csvabbrev -i >inflated.csv
+    $ csvabbrev -i compressed.csv inflated.csv
+    $ csvabbrev -i compressed.csv >inflated.csv
 
 ## Edge-case behavior
 
