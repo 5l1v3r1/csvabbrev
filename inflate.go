@@ -29,6 +29,11 @@ func inflateStream(r io.Reader, w io.Writer) error {
 			return err
 		}
 		lineNum++
+		select {
+		case <-DieChannel:
+			return nil
+		default:
+		}
 	}
 }
 
