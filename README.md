@@ -1,8 +1,14 @@
 # csvabbrev
 
-**csvabbrev** provides a simple way to shrink large CSV files without binary compression. It is geared towards CSV files where a rows tend to repeat values from the rows preceding them.
+`csvabbrev` provides a simple way to shrink large CSV files without binary compression. It is geared towards CSV files where a rows tend to repeat values from the rows preceding them.
 
-This README describes [the algorithm employed by](#how-it-works) and [the command-line usage of](#usage) **csvabbrev**.
+This README describes [the algorithm employed by](#how-it-works) and [the command-line usage of](#usage) `csvabbrev`.
+
+# Advantages
+
+Unlike gzip and other forms of binary compression, files compressed with `csvabbrev` can be joined with simple file concatenation. This is useful when working with many large CSV files.
+
+Another advantage of `csvabbrev` is that it deals with individual *lines* of the input file. If you kill `gzip` while it is compressing a CSV file, who knows if the resulting file represent valid CSV. With `csvabbrev`, you know that sending a SIGTERM will cause `csvabbrev` to flush the current line before terminating. This is especially useful when piping an infinite stream of CSV data into `csvabbrev`.
 
 # How it works
 
@@ -19,7 +25,7 @@ Alex,Nichol,5
 
 Clearly, even a half-baked compression algorithm could work some magic on this example. Sometimes, though, binary compression is too heavy-weight. Maybe you want a human-readable document, but you want to "compress" the data nonetheless.
 
-**csvabbrev** shrinks this data by putting a `^` in place of repeated values:
+`csvabbrev` shrinks this data by putting a `^` in place of repeated values:
 
 ```csv
 Alex,Nichol,6
@@ -30,7 +36,7 @@ Alex,Nichol,6
 ...
 ```
 
-One issue with this strategy is that the original CSV file might already have `^` in some of its fields. To address this, **csvabbrev** inserts an extra `^` before any ^-only entry (e.g., `^`, `^^`, `^^^`) from the original document. Thus, `^` gets escaped to `^^`, `^^` to `^^^`, etc.
+One issue with this strategy is that the original CSV file might already have `^` in some of its fields. To address this, `csvabbrev` inserts an extra `^` before any ^-only entry (e.g., `^`, `^^`, `^^^`) from the original document. Thus, `^` gets escaped to `^^`, `^^` to `^^^`, etc.
 
 # Usage
 
