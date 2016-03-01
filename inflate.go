@@ -6,9 +6,10 @@ import (
 	"io"
 )
 
-func InflateStream(r io.Reader, w io.Writer) error {
+func InflateStream(r io.Reader, w io.Writer, buffer bool) error {
 	var lastRecord []string
 	csvWriter := csv.NewWriter(w)
+	defer csvWriter.Flush()
 	return ReadCSV(r, func(record []string) error {
 		if err := inflateRecord(record, lastRecord); err != nil {
 			return err
@@ -17,9 +18,11 @@ func InflateStream(r io.Reader, w io.Writer) error {
 		if err := csvWriter.Write(record); err != nil {
 			return err
 		}
-		csvWriter.Flush()
-		if err := csvWriter.Error(); err != nil {
-			return err
+		if !buffer {
+			csvWriter.Flush()
+			if err := csvWriter.Error(); err != nil {
+				return err
+			}
 		}
 		return nil
 	})

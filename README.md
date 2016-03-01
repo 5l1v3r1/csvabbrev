@@ -43,7 +43,8 @@ One issue with this strategy is that the original CSV file might already have `^
 To compile this, must have the Go programming language installed and configured correctly. Once you do, run `go install` in this repo to get the `csvabbrev` command. You can check for the presence of this command by viewing the usage:
 
     $ csvabbrev --help
-    Usage: csvabbrev [-h | --help] [-i | --inflate] [file-in [file-out]]
+    Usage: csvabbrev [-h | --help] [-i | --inflate] [-b | --buffer]
+                     [file-in [file-out]]
 
 The `csvabbrev` command can operate on standard input/output, or on files. If you do not specify files, it will assume that it is working with the standard input/output streams. Here are multiple ways that you can deflate (i.e. compress) a CSV file:
 
@@ -59,9 +60,9 @@ To inflate (i.e. decompress) a file, the usage is almost exactly the same, but y
     $ csvabbrev -i compressed.csv inflated.csv
     $ csvabbrev -i compressed.csv >inflated.csv
 
-## Edge-case behavior
+The `-b` (or `--buffer`) flag uses buffered I/O for generating output. In most cases, this is acceptable, and increases performance considerably. Note, however, that buffering is not ideal for all use cases. For instance, buffering isn't great if you want to pipe slowly-arriving CSV data through `csvabbrev` in real-time with low latency. Buffering is disabled by default for backwards compatibility.
 
-The `csvabbrev` command is designed to run on a continuous stream of input. This means that you can pipe a CSV-generating program into `csvabbrev`. If you do this, `csvabbrev` will forward the deflated output to its own standard output in real time (i.e. without any buffering).
+## Edge-case behavior
 
 The `csvabbrev` command attempts to shutdown gracefully. If `csvabbrev` is sent a `SIGTERM` or `SIGINT`, it will wait to finish writing its current line of CSV data before terminating.
 

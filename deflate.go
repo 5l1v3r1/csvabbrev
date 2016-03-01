@@ -5,18 +5,21 @@ import (
 	"io"
 )
 
-func DeflateStream(r io.Reader, w io.Writer) error {
+func DeflateStream(r io.Reader, w io.Writer, buffer bool) error {
 	var lastRecord []string
 	csvWriter := csv.NewWriter(w)
+	defer csvWriter.Flush()
 	return ReadCSV(r, func(record []string) error {
 		deflated := deflateRecord(record, lastRecord)
 		lastRecord = record
 		if err := csvWriter.Write(deflated); err != nil {
 			return err
 		}
-		csvWriter.Flush()
-		if err := csvWriter.Error(); err != nil {
-			return err
+		if !buffer {
+			csvWriter.Flush()
+			if err := csvWriter.Error(); err != nil {
+				return err
+			}
 		}
 		return nil
 	})
